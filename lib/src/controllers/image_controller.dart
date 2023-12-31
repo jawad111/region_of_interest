@@ -18,4 +18,6 @@ class ImageController{
     ImageInfo imageInformation = await getImageInformation(image);
     return Size(imageInformation.image.width.toDouble(), imageInformation.image.height.toDouble());
   }
+
+ 
 }
