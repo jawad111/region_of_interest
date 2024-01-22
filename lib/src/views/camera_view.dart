@@ -1,14 +1,14 @@
 part of region_of_interest;
 
 // A screen that allows users to take a picture using a given camera.
-class CameraPage extends StatefulWidget {
+class CameraScreen extends StatefulWidget {
   final List<CameraDescription>? cameras;
-  const CameraPage({Key? key, required this.cameras}) : super(key: key);
+  const CameraScreen({Key? key, required this.cameras}) : super(key: key);
   @override
-  State<CameraPage> createState() => _CameraPageState();
+  State<CameraScreen> createState() => _CameraScreenState();
 }
 
-class _CameraPageState extends State<CameraPage> {
+class _CameraScreenState extends State<CameraScreen> {
   late CameraController _cameraController;
 
   // Holds the position information of the BoundingBox
@@ -27,24 +27,43 @@ class _CameraPageState extends State<CameraPage> {
   double initialYPosition = 0.0;
 
   //Subtract with Non-Negative Result
-  double getEndPositionOfRegion(double newPosition, double initialPosition){
+  double getEndPositionOfRegion(double newPosition, double initialPosition) {
     double endPosition = newPosition - initialPosition;
     return endPosition < 0 ? 0.0 : endPosition;
   }
 
   //Update Region Bottom-Right Point
-  void updateRegionPosition(
-      double updatedPositionX, double updatedPositionY) {
+  void updateRegionPosition(double updatedPositionX, double updatedPositionY) {
     setState(() {
       // assign new position
       _position = {
         'x': initialXPosition,
         'y': initialYPosition,
-        'w': getEndPositionOfRegion(updatedPositionX,initialXPosition),
-        'h': getEndPositionOfRegion(updatedPositionY,initialYPosition),
+        'w': getEndPositionOfRegion(updatedPositionX, initialXPosition),
+        'h': getEndPositionOfRegion(updatedPositionY, initialYPosition),
       };
       _boundingBoxVisible = true;
     });
+  }
+
+  //Take Picture Function
+  Future<XFile?> takePicture() async {
+    // Provide an onPressed callback.
+
+    // Take the Picture in a try / catch block. If anything goes wrong,
+    // catch the error.
+    try {
+      // Ensure that the camera is initialized.
+      if (!_cameraController.value.isInitialized) return null;
+      // Attempt to take a picture and then get the location
+      // where the image file is saved.
+      final image = await _cameraController.takePicture();
+      return image;
+      ;
+    } catch (e) {
+      // If an error occurs, log the error to the console.
+      print(e);
+    }
   }
 
   Future initCamera(CameraDescription cameraDescription) async {
@@ -85,65 +104,84 @@ class _CameraPageState extends State<CameraPage> {
   @override
   Widget build(BuildContext context) {
     return _cameraController.value.isInitialized
-        ? Container(
-              height: MediaQuery.of(context).size.height,
-              width: MediaQuery.of(context).size.width,
-              child: InteractiveViewer(
-                onInteractionStart: (details) {
-                  initialXPosition = details.focalPoint.dx;
-                  initialYPosition = details.focalPoint.dy;
-                },
-                onInteractionUpdate: (details) {
-                  updateRegionPosition(
-                      details.focalPoint.dx, details.focalPoint.dy);
-                },
-                child: Stack(
-                  alignment: AlignmentDirectional.center,
-                  children: [
-                    _cameraController == null
-                        ? Container()
-                        : Container(
-                            height: MediaQuery.of(context).size.height,
-                            width: MediaQuery.of(context).size.width,
-                            child: CameraPreview(_cameraController)),
-                    if (_boundingBoxVisible)
-                      Positioned(
-                        left: _position['x'],
-                        top: _position['y'],
-                        child: InkWell(
-                          onTap: () {
-                            // When the user taps on the rectangle, it will disappear
-                            setState(() {
-                              _boundingBoxVisible = false;
-                            });
-                          },
-                          child: Container(
-                            width: _position['w'],
-                            height: _position['h'],
-                            decoration: BoxDecoration(
-                              border: Border.all(
-                                width: 2,
-                                color: Colors.green,
-                              ),
-                            ),
-                            child: Align(
-                              alignment: Alignment.topLeft,
+        ? SafeArea(
+          child: Scaffold(
+              body: Container(
+                  height: MediaQuery.of(context).size.height,
+                  width: MediaQuery.of(context).size.width,
+                  child: InteractiveViewer(
+                    onInteractionStart: (details) {
+                      initialXPosition = details.focalPoint.dx;
+                      initialYPosition = details.focalPoint.dy;
+                    },
+                    onInteractionUpdate: (details) {
+                      updateRegionPosition(
+                          details.focalPoint.dx, details.focalPoint.dy);
+                    },
+                    onInteractionEnd: (details) async {
+                      XFile? image = await takePicture();
+        
+                      if (image != null) {
+                        // If the picture was taken, display it on a new screen.
+                        await Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => DisplayPictureScreen(
+                            // Pass the automatically generated path to
+                            // the DisplayPictureScreen widget.
+                            imagePath: image.path,
+        
+                            // Pass bounding box position to overlay on top
+                            boundingBoxPosition: _position,
+                          ),
+                        ));
+                      }
+                    },
+                    child: Stack(
+                      alignment: AlignmentDirectional.center,
+                      children: [
+                        _cameraController == null
+                            ? Container()
+                            : Container(
+                                height: MediaQuery.of(context).size.height,
+                                width: MediaQuery.of(context).size.width,
+                                child: CameraPreview(_cameraController)),
+                        if (_boundingBoxVisible)
+                          Positioned(
+                            left: _position['x'],
+                            top: _position['y'],
+                            child: InkWell(
+                              onTap: () {
+                                //TAP TO HIDE REGION
+                                setState(() {
+                                  _boundingBoxVisible = false;
+                                });
+                              },
                               child: Container(
-                                color: Colors.green,
-                                child: Text(
-                                  'ITEM',
-                                  style: TextStyle(color: Colors.white),
+                                width: _position['w'],
+                                height: _position['h'],
+                                decoration: BoxDecoration(
+                                  border: Border.all(
+                                    width: 2,
+                                    color: Colors.green,
+                                  ),
+                                ),
+                                child: Align(
+                                  alignment: Alignment.topLeft,
+                                  child: Container(
+                                    color: Colors.green,
+                                    child: Text(
+                                      'ITEM',
+                                      style: TextStyle(color: Colors.white),
+                                    ),
+                                  ),
                                 ),
                               ),
                             ),
                           ),
-                        ),
-                      ),
-                  ],
-                ),
-              )
-            
-          )
+                      ],
+                    ),
+                  )),
+            ),
+        )
         : const Center(child: CircularProgressIndicator());
   }
 }

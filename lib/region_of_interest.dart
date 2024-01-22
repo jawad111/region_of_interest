@@ -12,6 +12,7 @@ part 'src/controllers/transformation_controller.dart';
 part 'src/models/point.dart';
 part 'src/controllers/image_controller.dart';
 part 'src/views/camera_view.dart';
+part 'src/views/displayCapture.dart';
 
 
 
