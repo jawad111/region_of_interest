@@ -2,7 +2,7 @@ part of region_of_interest;
 
 // A screen that allows users to take a picture using a given camera.
 class CameraScreen extends StatefulWidget {
-  final List<CameraDescription>? cameras;
+  final List<CameraDescription> cameras;
   const CameraScreen({Key? key, required this.cameras}) : super(key: key);
   @override
   State<CameraScreen> createState() => _CameraScreenState();
@@ -45,6 +45,30 @@ class _CameraScreenState extends State<CameraScreen> {
       _boundingBoxVisible = true;
     });
   }
+
+  Future<ui.Image?> drawOnImage(ui.Image image) async {
+    Completer<ui.Image> completer = Completer<ui.Image>();
+
+    final ByteData? bytes = await image.toByteData(format: ImageByteFormat.rawRgba);
+
+    bytes?.setUint32(0, 0xFF0000FF);
+
+    final x = 10;
+    final y = 10;
+    bytes?.setUint32((y * image.width + x) * 4, 0x00FF00FF);
+
+    decodeImageFromPixels(
+      bytes?.buffer.asUint8List() ?? Uint8List(0),
+      image.width,
+      image.height,
+      ui.PixelFormat.rgba8888,
+      (ui.Image result) {
+        completer.complete(result);
+      },
+    );
+
+    return completer.future;
+}
 
   //Take Picture Function
   Future<XFile?> takePicture() async {
@@ -101,6 +125,14 @@ class _CameraScreenState extends State<CameraScreen> {
     super.dispose();
   }
 
+  Future<ui.Image> convertImage(String imagePath) async {
+    final ByteData data = await rootBundle.load(imagePath);
+    final List<int> bytes = data.buffer.asUint8List();
+    final ui.Codec codec = await ui.instantiateImageCodec(bytes as Uint8List);
+    final ui.Image image = (await codec.getNextFrame()).image;
+    return image;
+  }
+
   @override
   Widget build(BuildContext context) {
     return _cameraController.value.isInitialized
@@ -120,20 +152,45 @@ class _CameraScreenState extends State<CameraScreen> {
                     },
                     onInteractionEnd: (details) async {
                       XFile? image = await takePicture();
-        
-                      if (image != null) {
+                      final bytes = await File(image?.path ?? "").readAsBytes();
+                      
+
+
+                      // Convert the picture to a ui.Image
+                      ui.Image convertedImage = await convertImage(image?.path ?? "");
+
+                      //Draw on image
+                      ui.Image? drawImage = await drawOnImage(convertedImage);
+
+                      final drawByteData = await drawImage?.toByteData();
+
+                       if (image != null) {
                         // If the picture was taken, display it on a new screen.
                         await Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => DisplayPictureScreen(
+                          builder: (context) => BytesImageView(
                             // Pass the automatically generated path to
                             // the DisplayPictureScreen widget.
-                            imagePath: image.path,
+                            pngBytes: drawByteData,
         
-                            // Pass bounding box position to overlay on top
-                            boundingBoxPosition: _position,
+                            // // Pass bounding box position to overlay on top
+                            // boundingBoxPosition: _position,
                           ),
                         ));
                       }
+        
+                      // if (image != null) {
+                      //   // If the picture was taken, display it on a new screen.
+                      //   await Navigator.of(context).push(MaterialPageRoute(
+                      //     builder: (context) => DisplayPictureScreen(
+                      //       // Pass the automatically generated path to
+                      //       // the DisplayPictureScreen widget.
+                      //       imagePath: image.path,
+        
+                      //       // Pass bounding box position to overlay on top
+                      //       boundingBoxPosition: _position,
+                      //     ),
+                      //   ));
+                      // }
                     },
                     child: Stack(
                       alignment: AlignmentDirectional.center,
