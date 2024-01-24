@@ -46,29 +46,39 @@ class _CameraScreenState extends State<CameraScreen> {
     });
   }
 
-  Future<ui.Image?> drawOnImage(ui.Image image) async {
-    Completer<ui.Image> completer = Completer<ui.Image>();
 
-    final ByteData? bytes = await image.toByteData(format: ImageByteFormat.rawRgba);
+  Future<ByteData?> drawOnImage(XFile imageFile) async {
+    // Read the image file
+    List<int> bytes = await File(imageFile.path).readAsBytes();
+    ui.Codec codec = await ui.instantiateImageCodec(Uint8List.fromList(bytes));
+    ui.FrameInfo frameInfo = await codec.getNextFrame();
+    ui.Image image = frameInfo.image;
 
-    bytes?.setUint32(0, 0xFF0000FF);
+    // Create a recorder to draw on the image
+    ui.PictureRecorder recorder = ui.PictureRecorder();
+    Canvas canvas = Canvas(recorder);
 
-    final x = 10;
-    final y = 10;
-    bytes?.setUint32((y * image.width + x) * 4, 0x00FF00FF);
+    // Perform your drawing operations on the canvas
+    Paint paint = Paint()..color = Color(0xFFFF0000); // Red color
+    canvas.drawLine(Offset(200, 200), Offset(50, 50), paint);
 
-    decodeImageFromPixels(
-      bytes?.buffer.asUint8List() ?? Uint8List(0),
-      image.width,
-      image.height,
-      ui.PixelFormat.rgba8888,
-      (ui.Image result) {
-        completer.complete(result);
-      },
-    );
+    // End drawing and save to a new image
+    ui.Picture picture = recorder.endRecording();
+    ui.Image drawnImage = await picture.toImage(image.width, image.height);
+    ByteData? byteData = await drawnImage.toByteData(format: ui.ImageByteFormat.png);
 
-    return completer.future;
-}
+    return byteData;
+    // Save the modified image to a new file
+    // String fileName = imageFile.path.split('/').last;
+    // String directory = (await getApplicationDocumentsDirectory()).path;
+    // String newPath = '$directory/drawn_$fileName';
+    // File newImageFile = File(newPath);
+    // await newImageFile.writeAsBytes(byteData!.buffer.asUint8List());
+
+    // // Now, 'newPath' contains the path to the modified image
+    // print('Modified image saved at: $newPath');
+  }
+
 
   //Take Picture Function
   Future<XFile?> takePicture() async {
@@ -153,16 +163,12 @@ class _CameraScreenState extends State<CameraScreen> {
                     onInteractionEnd: (details) async {
                       XFile? image = await takePicture();
                       final bytes = await File(image?.path ?? "").readAsBytes();
+
                       
-
-
-                      // Convert the picture to a ui.Image
-                      ui.Image convertedImage = await convertImage(image?.path ?? "");
-
+                      
                       //Draw on image
-                      ui.Image? drawImage = await drawOnImage(convertedImage);
+                      final drawByteData = await drawOnImage(image ?? XFile(""));
 
-                      final drawByteData = await drawImage?.toByteData();
 
                        if (image != null) {
                         // If the picture was taken, display it on a new screen.
