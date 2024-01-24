@@ -170,7 +170,7 @@ class _CameraScreenState extends State<CameraScreen> {
                           builder: (context) => BytesImageView(
                             // Pass the automatically generated path to
                             // the DisplayPictureScreen widget.
-                            pngBytes: drawByteData,
+                            pngBytes: drawByteData?.buffer.asUint8List() ,
         
                             // // Pass bounding box position to overlay on top
                             // boundingBoxPosition: _position,
