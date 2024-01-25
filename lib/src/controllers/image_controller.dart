@@ -2,7 +2,7 @@ part of region_of_interest;
 
 class ImageController{
 
-  Future<ImageInfo> getImageInformation(Image image){
+  static Future<ImageInfo> getImageInformation(Image image){
     Completer<ImageInfo> completer = Completer();
     image.image.resolve(ImageConfiguration()).addListener(
       ImageStreamListener(
@@ -14,20 +14,25 @@ class ImageController{
     return completer.future;
   }
 
-  Future<Size> getImageSize(Image image) async{
+  static Future<Size> getImageSize(Image image) async{
     ImageInfo imageInformation = await getImageInformation(image);
     return Size(imageInformation.image.width.toDouble(), imageInformation.image.height.toDouble());
   }
 
-  Future<ui.Image> xFileToImage(String xfileImagePath) async {
-    final ByteData data = await rootBundle.load(xfileImagePath);
+  static Future<Size> getImageSizeFromBytes(List<int> bytes) async{
+    ui.Image decodedImg = await decodeImageFromList(Uint8List.fromList(bytes));
+    return Size(decodedImg.width.toDouble(), decodedImg.height.toDouble());
+  }
+
+  static Future<ui.Image> xFileToImage(XFile xfileImage) async {
+    final ByteData data = await rootBundle.load(xfileImage.path);
     final List<int> bytes = data.buffer.asUint8List();
     final ui.Codec codec = await ui.instantiateImageCodec(bytes as Uint8List);
     final ui.Image image = (await codec.getNextFrame()).image;
     return image;
   }
 
-  Future<ui.Image?> drawOnImage(ui.Image image) async {
+  static Future<ui.Image?> drawOnImage(ui.Image image) async {
     Completer<ui.Image> completer = Completer<ui.Image>();
 
     final ByteData? bytes = await image.toByteData(format: ImageByteFormat.rawRgba);

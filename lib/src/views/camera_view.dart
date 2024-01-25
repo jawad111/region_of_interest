@@ -59,12 +59,22 @@ class _CameraScreenState extends State<CameraScreen> {
   }
 
 
-  Future<Uint8List?> drawOnImage(XFile imageFile , Map<String, double> _position) async {
+  Future<Uint8List?> drawOnImage(XFile xFile , Map<String, double> _position, Size screenSize) async {
     // Read the image file
-    List<int> bytes = await File(imageFile.path).readAsBytes();
+    List<int> bytes = await File(xFile.path).readAsBytes();
     img.Image image = img.decodeImage(Uint8List.fromList(bytes))!;
 
-    List<img.Point> rectanglePoints = getPointsFromPosition(_position);
+    // Get xFileImageSize
+    Size capturedImageSize = await ImageController.getImageSizeFromBytes(bytes);
+
+    //List<img.Point> rectanglePoints = getPointsFromPosition(_position);
+
+    img.Point rectangleStartPoint = img.Point(_position['x'] ?? 0.0, _position['y'] ?? 0.0);
+    img.Point rectangleEndPoint = img.Point(_position['w'] ?? 0.0, _position['h'] ?? 0.0);
+
+
+    List<img.Point> rectanglePoints = TransformationController.transformRegionOfIntrestOnImage(rectangleStartPoint, rectangleEndPoint, screenSize, capturedImageSize);
+
 
     // Perform drawing operations on the image
     img.drawPolygon(image, vertices: rectanglePoints,  color: img.ColorRgb8(0, 255, 0), thickness: 5); // Green line
@@ -173,7 +183,7 @@ class _CameraScreenState extends State<CameraScreen> {
                       
                       
                       //Draw on image
-                      final drawByteData = await drawOnImage(image ?? XFile(""), _position);
+                      final drawByteData = await drawOnImage(image ?? XFile(""), _position, Size(MediaQuery.of(context).size.width, MediaQuery.of(context).size.height));
 
 
                        if (image != null) {
