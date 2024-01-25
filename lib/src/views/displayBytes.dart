@@ -12,7 +12,7 @@ class BytesImageView extends StatelessWidget {
           height: MediaQuery.of(context).size.height,
           width: MediaQuery.of(context).size.width,
 
-      child: Image.memory(pngBytes ?? Uint8List(0)),
+      child: Image.memory(pngBytes ?? Uint8List(0), fit: BoxFit.fill,),
     ));
   }
 }

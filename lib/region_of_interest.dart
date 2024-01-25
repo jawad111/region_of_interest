@@ -10,6 +10,8 @@ import 'package:camera/camera.dart';
 import 'dart:async';
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:image/image.dart' as img;
+
 
 part 'src/controllers/transformation_controller.dart';
 part 'src/models/point.dart';

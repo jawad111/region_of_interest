@@ -47,27 +47,18 @@ class _CameraScreenState extends State<CameraScreen> {
   }
 
 
-  Future<ByteData?> drawOnImage(XFile imageFile) async {
+  Future<Uint8List?> drawOnImage(XFile imageFile) async {
     // Read the image file
     List<int> bytes = await File(imageFile.path).readAsBytes();
-    ui.Codec codec = await ui.instantiateImageCodec(Uint8List.fromList(bytes));
-    ui.FrameInfo frameInfo = await codec.getNextFrame();
-    ui.Image image = frameInfo.image;
+    img.Image image = img.decodeImage(Uint8List.fromList(bytes))!;
 
-    // Create a recorder to draw on the image
-    ui.PictureRecorder recorder = ui.PictureRecorder();
-    Canvas canvas = Canvas(recorder);
+    // Perform your drawing operations on the image
+    img.drawLine(image, x1:10, x2:300, y1:10, y2:300,  color: img.ColorRgb8(255, 0, 0), thickness: 7); // Red line
 
-    // Perform your drawing operations on the canvas
-    Paint paint = Paint()..color = Color(0xFFFF0000); // Red color
-    canvas.drawLine(Offset(200, 200), Offset(50, 50), paint);
+    // Convert the modified image to Uint8List
+    Uint8List? modifiedImageData = img.encodePng(image);
 
-    // End drawing and save to a new image
-    ui.Picture picture = recorder.endRecording();
-    ui.Image drawnImage = await picture.toImage(image.width, image.height);
-    ByteData? byteData = await drawnImage.toByteData(format: ui.ImageByteFormat.png);
-
-    return byteData;
+    return modifiedImageData;
     // Save the modified image to a new file
     // String fileName = imageFile.path.split('/').last;
     // String directory = (await getApplicationDocumentsDirectory()).path;
@@ -176,7 +167,7 @@ class _CameraScreenState extends State<CameraScreen> {
                           builder: (context) => BytesImageView(
                             // Pass the automatically generated path to
                             // the DisplayPictureScreen widget.
-                            pngBytes: drawByteData?.buffer.asUint8List() ,
+                            pngBytes: drawByteData ,
         
                             // // Pass bounding box position to overlay on top
                             // boundingBoxPosition: _position,
