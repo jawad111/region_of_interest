@@ -46,14 +46,29 @@ class _CameraScreenState extends State<CameraScreen> {
     });
   }
 
+  List<img.Point> getPointsFromPosition(Map<String, double> _position){
+    List<img.Point> rectanglePoints = [];
+    rectanglePoints.add(img.Point(_position['x'] ?? 0.0, _position['y'] ?? 0.0)); // TOP-LEFT
+    rectanglePoints.add(img.Point(_position['w'] ?? 0.0, _position['y'] ?? 0.0,)); // TOP-RIGHT (bottom-right x, top-left y)
+    rectanglePoints.add(img.Point(_position['w'] ?? 0.0, _position['h'] ?? 0.0)); // BOTTOM-RIGHT
+    rectanglePoints.add(img.Point(_position['x'] ?? 0.0, _position['h'] ?? 0.0)); // BOTTOM-LEFT (top-left x, bottom-right y)
 
-  Future<Uint8List?> drawOnImage(XFile imageFile) async {
+
+    return rectanglePoints;
+
+  }
+
+
+  Future<Uint8List?> drawOnImage(XFile imageFile , Map<String, double> _position) async {
     // Read the image file
     List<int> bytes = await File(imageFile.path).readAsBytes();
     img.Image image = img.decodeImage(Uint8List.fromList(bytes))!;
 
-    // Perform your drawing operations on the image
-    img.drawLine(image, x1:10, x2:300, y1:10, y2:300,  color: img.ColorRgb8(255, 0, 0), thickness: 7); // Red line
+    List<img.Point> rectanglePoints = getPointsFromPosition(_position);
+
+    // Perform drawing operations on the image
+    img.drawPolygon(image, vertices: rectanglePoints,  color: img.ColorRgb8(0, 255, 0), thickness: 5); // Green line
+    
 
     // Convert the modified image to Uint8List
     Uint8List? modifiedImageData = img.encodePng(image);
@@ -158,7 +173,7 @@ class _CameraScreenState extends State<CameraScreen> {
                       
                       
                       //Draw on image
-                      final drawByteData = await drawOnImage(image ?? XFile(""));
+                      final drawByteData = await drawOnImage(image ?? XFile(""), _position);
 
 
                        if (image != null) {
