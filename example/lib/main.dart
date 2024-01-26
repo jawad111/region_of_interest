@@ -5,10 +5,6 @@ import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:region_of_interest/region_of_interest.dart';
 
-//import 'package:path_provider/path_provider.dart';
-//import 'package:simple_permissions/simple_permissions.dart';
-
-const directoryName = 'Signature';
 
 Future<void> main() async {
   // Ensure that plugin services are initialized so that `availableCameras()`

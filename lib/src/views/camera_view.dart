@@ -84,15 +84,6 @@ class _CameraScreenState extends State<CameraScreen> {
     Uint8List? modifiedImageData = img.encodePng(image);
 
     return modifiedImageData;
-    // Save the modified image to a new file
-    // String fileName = imageFile.path.split('/').last;
-    // String directory = (await getApplicationDocumentsDirectory()).path;
-    // String newPath = '$directory/drawn_$fileName';
-    // File newImageFile = File(newPath);
-    // await newImageFile.writeAsBytes(byteData!.buffer.asUint8List());
-
-    // // Now, 'newPath' contains the path to the modified image
-    // print('Modified image saved at: $newPath');
   }
 
 
@@ -149,14 +140,6 @@ class _CameraScreenState extends State<CameraScreen> {
     // Dispose of the controller when the widget is disposed.
     _cameraController.dispose();
     super.dispose();
-  }
-
-  Future<ui.Image> convertImage(String imagePath) async {
-    final ByteData data = await rootBundle.load(imagePath);
-    final List<int> bytes = data.buffer.asUint8List();
-    final ui.Codec codec = await ui.instantiateImageCodec(bytes as Uint8List);
-    final ui.Image image = (await codec.getNextFrame()).image;
-    return image;
   }
 
   @override
