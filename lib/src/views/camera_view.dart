@@ -1,14 +1,15 @@
 part of region_of_interest;
 
-// A screen that allows users to take a picture using a given camera.
-class CameraScreen extends StatefulWidget {
-  final List<CameraDescription> cameras;
-  const CameraScreen({Key? key, required this.cameras}) : super(key: key);
+// A screen that allows users to define rectangle and take a picture using a given camera.
+class DefineRegionScreen extends StatefulWidget {
+  final CameraDescription camera;
+  final Function callback;
+  const DefineRegionScreen({Key? key, required this.camera, required this.callback}) : super(key: key);
   @override
-  State<CameraScreen> createState() => _CameraScreenState();
+  State<DefineRegionScreen> createState() => _DefineRegionScreenState();
 }
 
-class _CameraScreenState extends State<CameraScreen> {
+class _DefineRegionScreenState extends State<DefineRegionScreen> {
   late CameraController _cameraController;
 
   // Holds the position information of the BoundingBox
@@ -22,20 +23,20 @@ class _CameraScreenState extends State<CameraScreen> {
   // Toggle BoundingBox display
   bool _boundingBoxVisible = false;
 
-  //Initial Tap Positions
+  // Initial Tap Positions
   double initialXPosition = 0.0;
   double initialYPosition = 0.0;
 
-  //Subtract with Non-Negative Result
+  // Subtract with Non-Negative Result
   double getEndPositionOfRegion(double newPosition, double initialPosition) {
     double endPosition = newPosition - initialPosition;
     return endPosition < 0 ? 0.0 : endPosition;
   }
 
-  //Update Region Bottom-Right Point
+  // Update Region Bottom-Right Point
   void updateRegionPosition(double updatedPositionX, double updatedPositionY) {
     setState(() {
-      // assign new position
+      // Assign new position
       _position = {
         'x': initialXPosition,
         'y': initialYPosition,
@@ -46,69 +47,26 @@ class _CameraScreenState extends State<CameraScreen> {
     });
   }
 
-  List<img.Point> getPointsFromPosition(Map<String, double> _position){
-    List<img.Point> rectanglePoints = [];
-    rectanglePoints.add(img.Point(_position['x'] ?? 0.0, _position['y'] ?? 0.0)); // TOP-LEFT
-    rectanglePoints.add(img.Point(_position['w'] ?? 0.0, _position['y'] ?? 0.0,)); // TOP-RIGHT (bottom-right x, top-left y)
-    rectanglePoints.add(img.Point(_position['w'] ?? 0.0, _position['h'] ?? 0.0)); // BOTTOM-RIGHT
-    rectanglePoints.add(img.Point(_position['x'] ?? 0.0, _position['h'] ?? 0.0)); // BOTTOM-LEFT (top-left x, bottom-right y)
-
-
-    return rectanglePoints;
-
-  }
-
-
-  Future<Uint8List?> drawOnImage(XFile xFile , Map<String, double> _position, Size screenSize) async {
-    // Read the image file
-    List<int> bytes = await File(xFile.path).readAsBytes();
-    img.Image image = img.decodeImage(Uint8List.fromList(bytes))!;
-
-    // Get xFileImageSize
-    Size capturedImageSize = await ImageController.getImageSizeFromBytes(bytes);
-
-    //List<img.Point> rectanglePoints = getPointsFromPosition(_position);
-
-    img.Point rectangleStartPoint = img.Point(_position['x'] ?? 0.0, _position['y'] ?? 0.0);
-    img.Point rectangleEndPoint = img.Point(_position['w'] ?? 0.0, _position['h'] ?? 0.0);
-
-
-    List<img.Point> rectanglePoints = TransformationController.transformRegionOfIntrestOnImage(rectangleStartPoint, rectangleEndPoint, screenSize, capturedImageSize);
-
-
-    // Perform drawing operations on the image
-    img.drawPolygon(image, vertices: rectanglePoints,  color: img.ColorRgb8(0, 255, 0), thickness: 5); // Green line
-    
-
-    // Convert the modified image to Uint8List
-    Uint8List? modifiedImageData = img.encodePng(image);
-
-    return modifiedImageData;
-  }
-
-
-  //Take Picture Function
+  // Take Picture Function
   Future<XFile?> takePicture() async {
-    // Provide an onPressed callback.
-
-    // Take the Picture in a try / catch block. If anything goes wrong,
-    // catch the error.
     try {
       // Ensure that the camera is initialized.
       if (!_cameraController.value.isInitialized) return null;
+      
       // Attempt to take a picture and then get the location
       // where the image file is saved.
       final image = await _cameraController.takePicture();
       return image;
-      ;
     } catch (e) {
       // If an error occurs, log the error to the console.
       print(e);
     }
   }
 
+  // Initialize Camera Function
   Future initCamera(CameraDescription cameraDescription) async {
-    // create a CameraController
+
+    //Initialize Camera Controller
     _cameraController = CameraController(
       cameraDescription,
       ResolutionPreset.high,
@@ -117,7 +75,7 @@ class _CameraScreenState extends State<CameraScreen> {
           ? ImageFormatGroup.nv21
           : ImageFormatGroup.bgra8888,
     );
-    // Next, initialize the controller. This returns a Future.
+
     try {
       await _cameraController.initialize().then((_) {
         if (!mounted) return;
@@ -131,8 +89,8 @@ class _CameraScreenState extends State<CameraScreen> {
   @override
   void initState() {
     super.initState();
-    // initialize the rear camera
-    initCamera(widget.cameras![0]);
+    // Initialize the given camera
+    initCamera(widget.camera);
   }
 
   @override
@@ -146,104 +104,105 @@ class _CameraScreenState extends State<CameraScreen> {
   Widget build(BuildContext context) {
     return _cameraController.value.isInitialized
         ? SafeArea(
-          child: Scaffold(
+            child: Scaffold(
               body: Container(
-                  height: MediaQuery.of(context).size.height,
-                  width: MediaQuery.of(context).size.width,
-                  child: InteractiveViewer(
-                    onInteractionStart: (details) {
-                      initialXPosition = details.focalPoint.dx;
-                      initialYPosition = details.focalPoint.dy;
-                    },
-                    onInteractionUpdate: (details) {
-                      updateRegionPosition(
-                          details.focalPoint.dx, details.focalPoint.dy);
-                    },
-                    onInteractionEnd: (details) async {
-                      XFile? image = await takePicture();
-                      final bytes = await File(image?.path ?? "").readAsBytes();
+                height: MediaQuery.of(context).size.height,
+                width: MediaQuery.of(context).size.width,
+                child: InteractiveViewer(
+                  onInteractionStart: (details) {
+                    initialXPosition = details.focalPoint.dx;
+                    initialYPosition = details.focalPoint.dy;
+                  },
+                  onInteractionUpdate: (details) {
+                    updateRegionPosition(
+                        details.focalPoint.dx, details.focalPoint.dy);
+                  },
+                  onInteractionEnd: (details) async {
+                    //Take A picture
+                    XFile? image = await takePicture();
 
-                      
-                      
-                      //Draw on image
-                      final drawByteData = await drawOnImage(image ?? XFile(""), _position, Size(MediaQuery.of(context).size.width, MediaQuery.of(context).size.height));
+                    //Read bytes of saved image
+                    Uint8List rawImageBytes = await File(image?.path ?? "").readAsBytes();
+
+                    // Define Screen Start Interaction and End Interaction points
+                    img.Point rectangleStartPoint = img.Point(_position['x'] ?? 0.0, _position['y'] ?? 0.0);
+                    img.Point rectangleEndPoint = img.Point(_position['w'] ?? 0.0, _position['h'] ?? 0.0);
+                    
+                    // Get Captured Image Size
+                    Size capturedImageSize = await ImageController.getImageSizeFromBytes(rawImageBytes);
+
+                    // Get Device Layout Screen Size
+                    Size screenDisplaySize = Size(MediaQuery.of(context).size.width,MediaQuery.of(context).size.height);
+
+                    // Mathmatically Transform Region Points defined on Device Screen to Actual Image
+                    // Convertion uses coordinate transformation to translate Region Points from Display Coordinated to Image Coordinated
+                    List<img.Point> rectanglePoints = TransformationController.transformRegionOfIntrestOnImage(rectangleStartPoint, rectangleEndPoint, screenDisplaySize, capturedImageSize);
+
+                    // Draw bounding box on image bytes
+                    Uint8List imageBytesWithRegion = await ImageController.drawOnImage(
+                      image ?? XFile(""),
+                      rectanglePoints
+                    );
+
+                    //Convert bytes to MemoryImage as an ImageProvider for user
+                    MemoryImage rawImage = await ImageController.uint8ListToMemoryImage(rawImageBytes);
+                    MemoryImage imageWithRegion = await ImageController.uint8ListToMemoryImage(imageBytesWithRegion);
 
 
-                       if (image != null) {
-                        // If the picture was taken, display it on a new screen.
-                        await Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => BytesImageView(
-                            // Pass the automatically generated path to
-                            // the DisplayPictureScreen widget.
-                            pngBytes: drawByteData ,
-        
-                            // // Pass bounding box position to overlay on top
-                            // boundingBoxPosition: _position,
-                          ),
-                        ));
-                      }
-        
-                      // if (image != null) {
-                      //   // If the picture was taken, display it on a new screen.
-                      //   await Navigator.of(context).push(MaterialPageRoute(
-                      //     builder: (context) => DisplayPictureScreen(
-                      //       // Pass the automatically generated path to
-                      //       // the DisplayPictureScreen widget.
-                      //       imagePath: image.path,
-        
-                      //       // Pass bounding box position to overlay on top
-                      //       boundingBoxPosition: _position,
-                      //     ),
-                      //   ));
-                      // }
-                    },
-                    child: Stack(
-                      alignment: AlignmentDirectional.center,
-                      children: [
-                        _cameraController == null
-                            ? Container()
-                            : Container(
-                                height: MediaQuery.of(context).size.height,
-                                width: MediaQuery.of(context).size.width,
-                                child: CameraPreview(_cameraController)),
-                        if (_boundingBoxVisible)
-                          Positioned(
-                            left: _position['x'],
-                            top: _position['y'],
-                            child: InkWell(
-                              onTap: () {
-                                //TAP TO HIDE REGION
-                                setState(() {
-                                  _boundingBoxVisible = false;
-                                });
-                              },
-                              child: Container(
-                                width: _position['w'],
-                                height: _position['h'],
-                                decoration: BoxDecoration(
-                                  border: Border.all(
-                                    width: 2,
-                                    color: Colors.green,
-                                  ),
+                    //Pass data to Callback Function defined by user
+                    widget.callback(context, rawImage, imageWithRegion, rectanglePoints);
+
+                    
+                  },
+                  child: Stack(
+                    alignment: AlignmentDirectional.center,
+                    children: [
+                      _cameraController == null
+                          ? Container()
+                          : Container(
+                              height: MediaQuery.of(context).size.height,
+                              width: MediaQuery.of(context).size.width,
+                              child: CameraPreview(_cameraController),
+                            ),
+                      if (_boundingBoxVisible)
+                        Positioned(
+                          left: _position['x'],
+                          top: _position['y'],
+                          child: InkWell(
+                            onTap: () {
+                              // TAP TO HIDE REGION
+                              setState(() {
+                                _boundingBoxVisible = false;
+                              });
+                            },
+                            child: Container(
+                              width: _position['w'],
+                              height: _position['h'],
+                              decoration: BoxDecoration(
+                                border: Border.all(
+                                  width: 2,
+                                  color: Colors.green,
                                 ),
-                                child: Align(
-                                  alignment: Alignment.topLeft,
-                                  child: Container(
-                                    color: Colors.green,
-                                    child: Text(
-                                      'ITEM',
-                                      style: TextStyle(color: Colors.white),
-                                    ),
+                              ),
+                              child: Align(
+                                alignment: Alignment.topLeft,
+                                child: Container(
+                                  color: Colors.green,
+                                  child: Text(
+                                    'ITEM',
+                                    style: TextStyle(color: Colors.white),
                                   ),
                                 ),
                               ),
                             ),
                           ),
-                      ],
-                    ),
-                  )),
+                        ),
+                    ],
+                  ),
+                ),
+              ),
             ),
-        )
+          )
         : const Center(child: CircularProgressIndicator());
   }
 }

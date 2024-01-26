@@ -19,42 +19,49 @@ class ImageController{
     return Size(imageInformation.image.width.toDouble(), imageInformation.image.height.toDouble());
   }
 
+  // Function to convert Uint8List to Image
+  // Function to convert Uint8List to MemoryImage
+  static Future<MemoryImage> uint8ListToMemoryImage(Uint8List uint8List) async {
+  // Convert Uint8List to ByteData
+  ByteData byteData = ByteData.view(uint8List.buffer);
+
+  // Decode Image
+  ui.Codec codec = await ui.instantiateImageCodec(uint8List);
+
+  // Convert to FrameInfo
+  ui.FrameInfo frameInfo = await codec.getNextFrame();
+
+  // Extract ui.Image from FrameInfo
+  ui.Image uiImage = frameInfo.image;
+
+  // Convert ui.Image to ByteData
+  ByteData? byteDataFromImage = await uiImage.toByteData(format: ui.ImageByteFormat.png);
+  Uint8List imageData = byteDataFromImage!.buffer.asUint8List();
+
+  // Create MemoryImage from Uint8List
+  MemoryImage memoryImage = MemoryImage(imageData);
+
+  return memoryImage;
+}
+
   static Future<Size> getImageSizeFromBytes(List<int> bytes) async{
     ui.Image decodedImg = await decodeImageFromList(Uint8List.fromList(bytes));
     return Size(decodedImg.width.toDouble(), decodedImg.height.toDouble());
   }
 
-  static Future<ui.Image> xFileToImage(XFile xfileImage) async {
-    final ByteData data = await rootBundle.load(xfileImage.path);
-    final List<int> bytes = data.buffer.asUint8List();
-    final ui.Codec codec = await ui.instantiateImageCodec(bytes as Uint8List);
-    final ui.Image image = (await codec.getNextFrame()).image;
-    return image;
+  static Future<Uint8List> drawOnImage(XFile xFile , List<img.Point> rectanglePoints) async {
+    // Read the image file
+    List<int> bytes = await File(xFile.path).readAsBytes();
+    img.Image image = img.decodeImage(Uint8List.fromList(bytes))!;
+    
+    // Perform drawing operations on the image
+    img.drawPolygon(image, vertices: rectanglePoints,  color: img.ColorRgb8(0, 255, 0), thickness: 5); // Green line
+
+    // Convert the modified image to Uint8List
+    Uint8List? modifiedImageData = img.encodePng(image);
+
+    return modifiedImageData;
   }
-
-  static Future<ui.Image?> drawOnImage(ui.Image image) async {
-    Completer<ui.Image> completer = Completer<ui.Image>();
-
-    final ByteData? bytes = await image.toByteData(format: ImageByteFormat.rawRgba);
-
-    bytes?.setUint32(0, 0xFF0000FF);
-
-    final x = 10;
-    final y = 10;
-    bytes?.setUint32((y * image.width + x) * 4, 0x00FF00FF);
-
-    decodeImageFromPixels(
-      bytes?.buffer.asUint8List() ?? Uint8List(0),
-      image.width,
-      image.height,
-      ui.PixelFormat.rgba8888,
-      (ui.Image result) {
-        completer.complete(result);
-      },
-    );
-
-    return completer.future;
-}
 
  
 }

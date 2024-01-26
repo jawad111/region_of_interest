@@ -2,11 +2,11 @@ part of region_of_interest;
 
 // A widget that displays the picture taken by the user.
 class DisplayPictureScreen extends StatelessWidget {
-  final String imagePath;
+  final MemoryImage image;
   final Map<String, double> boundingBoxPosition;
 
   const DisplayPictureScreen(
-      {super.key, required this.imagePath, required this.boundingBoxPosition});
+      {super.key, required this.image, required this.boundingBoxPosition});
 
   final double kToolBarHeight = 50;
   @override
@@ -24,10 +24,7 @@ class DisplayPictureScreen extends StatelessWidget {
             Container(
                 height: MediaQuery.of(context).size.height,
                 width: MediaQuery.of(context).size.width,
-                child: Image.file(
-                  File(imagePath),
-                  fit: BoxFit.fill,
-                )),
+                child: Image(image: image,)),
             Positioned(
               left: boundingBoxPosition['x'],
               top: boundingBoxPosition['y'],

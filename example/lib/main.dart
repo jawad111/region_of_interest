@@ -14,20 +14,34 @@ Future<void> main() async {
   // Obtain a list of the available cameras on the device.
   final cameras = await availableCameras();
 
-  // Get a specific camera from the list of available cameras.
+  // Pass a specific camera from the list of available cameras.
   runApp(MaterialApp(
-    home: TestApp(cameras: cameras,),
+    home: TestApp(camera: cameras[0],),
     debugShowCheckedModeBanner: false,
   ));
 }
 
+callBackFunction(BuildContext context, MemoryImage orignalImage, MemoryImage imageWithBoundingBox) {
+  if (orignalImage != null) {
+    // If the picture was taken, display it on a new screen.
+    Navigator.of(context).push(MaterialPageRoute(
+      builder: (context) => DisplayPictureScreen(
+        // Pass the automatically generated path to
+        // the BytesImageView widget.
+        image: orignalImage,
+        boundingBoxPosition: {},
+      ),
+    ));
+  }
+}
+
 
 class TestApp extends StatelessWidget {
-  final List<CameraDescription> cameras;
-  const TestApp({super.key, required this.cameras});
+  final CameraDescription camera;
+  const TestApp({super.key, required this.camera});
 
   @override
   Widget build(BuildContext context) {
-    return  CameraScreen(cameras: cameras);
+    return  DefineRegionScreen(camera: camera, callback: callBackFunction);
   }
 }
