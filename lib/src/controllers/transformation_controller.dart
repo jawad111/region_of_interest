@@ -1,70 +1,69 @@
 part of region_of_interest;
 
+/// A utility class responsible for transforming screen points to image points and performing related operations.
 class TransformationController {
 
-
-  //TRANSFORM FROM PRIMARY COORDINATE SYSTEM TO SECONDARY COORDINATE SYSTEM
-  static img.Point transformPoint(img.Point point, Size primaryCoordinateSystem, Size secondaryCoordinateSystem)
-  {    
-    //PRIMARY COORDINATE SYSTEM
+  /// Transforms a point from the primary coordinate system to the secondary coordinate system.
+  ///
+  /// [point]: The point in the primary coordinate system.
+  /// [primaryCoordinateSystem]: The size of the primary coordinate system.
+  /// [secondaryCoordinateSystem]: The size of the secondary coordinate system.
+  static Offset transformPoint(Offset point, Size primaryCoordinateSystem, Size secondaryCoordinateSystem) {
     double primaryWidth = primaryCoordinateSystem.width;
     double primaryHeight = primaryCoordinateSystem.height;
-    //SECONDARY COORDINATE SYSTEM
     double secondaryWidth = secondaryCoordinateSystem.width;
     double secondaryHeight = secondaryCoordinateSystem.height;
-    //APPLY TRANSFORMATION
-    double transformedPointX = point.x * (primaryWidth/secondaryWidth);
-    double transformedPointY = point.y * (primaryHeight/secondaryHeight);
-    return img.Point(transformedPointX, transformedPointY);
+    double transformedPointX = point.dx * (primaryWidth / secondaryWidth);
+    double transformedPointY = point.dy * (primaryHeight / secondaryHeight);
+    return Offset(transformedPointX, transformedPointY);
   }
 
-  //DECREASE IMAGE SIZE
-  static Size decreaseImageRatio(Size resolution, double factor){
+  /// Decreases the image resolution by a given factor.
+  static Size decreaseImageRatio(Size resolution, double factor) {
     double decreasedWidth = resolution.width / factor;
-    double decreasedHeight  = resolution.height / factor;
+    double decreasedHeight = resolution.height / factor;
     return Size(decreasedWidth, decreasedHeight);
   }
 
-  //INCREASE IMAGE SIZE
-  static Size increaseImageRatio(Size resolution, double factor){
-    double increasedWidth = resolution.width / factor;
-    double increasedHeight  = resolution.height / factor;
+  /// Increases the image resolution by a given factor.
+  static Size increaseImageRatio(Size resolution, double factor) {
+    double increasedWidth = resolution.width * factor;
+    double increasedHeight = resolution.height * factor;
     return Size(increasedWidth, increasedHeight);
   }
-  
-  //CALCULATE CENTER POINT OF THE RECTANGULAR BOUNDING BOX
-  static img.Point calculateCenterOfRectangle(img.Point rectangleEdgePoint1, img.Point rectangleEdgePoint2){
-    double midx = (rectangleEdgePoint1.x + rectangleEdgePoint2.x ) / 2;
-    double midy = (rectangleEdgePoint1.y + rectangleEdgePoint2.y ) / 2;
-    return img.Point(midx, midy);
+
+  /// Calculates the center point of a rectangular bounding box given two edge points.
+  static Offset calculateCenterOfRectangle(Offset rectangleEdgePoint1, Offset rectangleEdgePoint2) {
+    double midx = (rectangleEdgePoint1.dx + rectangleEdgePoint2.dx) / 2;
+    double midy = (rectangleEdgePoint1.dy + rectangleEdgePoint2.dy) / 2;
+    return Offset(midx, midy);
   }
 
-  //PASS IN START POINT(FIRST SCREEN TOUCH POINT) AND RELEASE POINT OF FINGER
-  static List<img.Point> calculateRegionOfIntresetOnScreen(img.Point startPoint, img.Point endPoint){
-    img.Point topLeft = startPoint;
-    img.Point topRight = img.Point(startPoint.x + endPoint.x, startPoint.y);
-    img.Point bottomLeft = img.Point(startPoint.x, startPoint.y + endPoint.y);
-    img.Point bottomRight = img.Point(startPoint.x + endPoint.x, startPoint.y + endPoint.y);
-    List<img.Point> regionOfIntrest = [topLeft, topRight, bottomLeft, bottomRight];
-    return regionOfIntrest;
+  /// Calculates the region of interest on the screen given the start and release points of a finger.
+  static List<Offset> calculateRegionOfInterestOnScreen(Offset startPoint, Offset endPoint) {
+    Offset topLeft = startPoint;
+    Offset topRight = Offset(startPoint.dx + endPoint.dx, startPoint.dy);
+    Offset bottomLeft = Offset(startPoint.dx, startPoint.dy + endPoint.dy);
+    Offset bottomRight = Offset(startPoint.dx + endPoint.dx, startPoint.dy + endPoint.dy);
+    return [topLeft, topRight, bottomLeft, bottomRight];
   }
 
-  //CONVERT SCREEN RECTANGULAR REGION OF INTREST INTO CORRESPONDING IMAGE'S REGION OF INTRESET 
-  static List<img.Point> transformRegionOfIntrestOnImage(img.Point startPoint, img.Point endPoint, Size screenResolution, Size imageResolution){
-    List<img.Point> rectangularPointsOfRegion = calculateRegionOfIntresetOnScreen(startPoint, endPoint);
-    img.Point topLeft = transformPoint(rectangularPointsOfRegion[0], imageResolution, screenResolution);
-    img.Point topRight = transformPoint(rectangularPointsOfRegion[1], imageResolution, screenResolution);
-    img.Point bottomLeft = transformPoint(rectangularPointsOfRegion[2], imageResolution, screenResolution);
-    img.Point bottomRight = transformPoint(rectangularPointsOfRegion[3], imageResolution, screenResolution);
-    List<img.Point> transformedRegionOfIntrest = [topLeft, topRight, bottomRight, bottomLeft];
-    return transformedRegionOfIntrest;
+  /// Converts a screen rectangular region of interest into the corresponding image's region of interest.
+  static BoundingBox transformRegionOfInterestOnImage(Offset startPoint, Offset endPoint, Size screenResolution, Size imageResolution) {
+    List<Offset> rectangularPointsOfRegion = calculateRegionOfInterestOnScreen(startPoint, endPoint);
+    Offset topLeft = transformPoint(rectangularPointsOfRegion[0], imageResolution, screenResolution);
+    Offset topRight = transformPoint(rectangularPointsOfRegion[1], imageResolution, screenResolution);
+    Offset bottomLeft = transformPoint(rectangularPointsOfRegion[2], imageResolution, screenResolution);
+    Offset bottomRight = transformPoint(rectangularPointsOfRegion[3], imageResolution, screenResolution);
+    return BoundingBox(topLeft: topLeft, topRight: topRight, bottomRight: bottomRight, bottomLeft: bottomLeft);
   }
 
-
-
-
-
- 
-
-
+  /// Convert from [BoundingBox] to [img.Point] data for the image package.
+  static List<img.Point> boundingBoxToPointList(BoundingBox box) {
+    img.Point topLeft = img.Point(box.topLeft.dx, box.topLeft.dy);
+    img.Point topRight = img.Point(box.topRight.dx, box.topRight.dy);
+    img.Point bottomLeft = img.Point(box.bottomLeft.dx, box.bottomLeft.dy);
+    img.Point bottomRight = img.Point(box.bottomRight.dx, box.bottomRight.dy);
+    return [topLeft, topRight, bottomRight, bottomLeft];
+  }
 }

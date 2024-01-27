@@ -1,88 +1,46 @@
 part of region_of_interest;
 
-// A widget that displays the picture taken by the user.
+/// A versatile widget for displaying images with customization options.
 class DisplayPictureScreen extends StatelessWidget {
-  final MemoryImage image;
-  final Map<String, double> boundingBoxPosition;
+  /// The image provider for the displayed image.
+  final ImageProvider<Object> imageProvider;
 
-  const DisplayPictureScreen(
-      {super.key, required this.image, required this.boundingBoxPosition});
+  /// The title displayed in the app bar.
+  final String title;
 
-  final double kToolBarHeight = 50;
+  /// The height of the app bar.
+  final double toolBarHeight;
+
+  /// The BoxFit for how the image should be inscribed into the container.
+  final BoxFit fit;
+
+  /// Creates a [DisplayPictureScreen] widget.
+  ///
+  /// [imageProvider]: The image provider for the displayed image.
+  /// [title]: The title displayed in the app bar.
+  /// [toolBarHeight]: The height of the app bar.
+  /// [fit]: The BoxFit for how the image should be inscribed into the container.
+  const DisplayPictureScreen({
+    Key? key,
+    required this.imageProvider,
+    this.title = 'Capture',
+    this.toolBarHeight = 50.0,
+    this.fit = BoxFit.fill,
+  }) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        // extendBody: true,
-        // appBar:
-        //     AppBar(toolbarHeight: kToolBarHeight, title: const Text('Capture')),
-        // The image is stored as a file on the device. Use the `Image.file`
-        // constructor with the given path to display the image.
-        body: Stack(
-          alignment: AlignmentDirectional.center,
-          children: [
-            Container(
-                height: MediaQuery.of(context).size.height,
-                width: MediaQuery.of(context).size.width,
-                child: Image(image: image,)),
-            Positioned(
-              left: boundingBoxPosition['x'],
-              top: boundingBoxPosition['y'],
-              child: Container(
-                width: boundingBoxPosition['w'],
-                height: boundingBoxPosition['h'],
-                decoration: BoxDecoration(
-                  border: Border.all(
-                    width: 2,
-                    color: Colors.green,
-                  ),
-                ),
-                child: Align(
-                  alignment: Alignment.topLeft,
-                  child: Container(
-                    color: Colors.green,
-                    child: Text(
-                      'ITEM',
-                      style: TextStyle(color: Colors.white),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-            Align(
-              alignment: Alignment.topCenter,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Card(
-                      child: IconButton(
-                          onPressed: () => Navigator.of(context).pop(),
-                          icon: Icon(Icons.arrow_back_rounded)),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(20),
-                        color: Colors.white
-
-                      ),
-                      child: Padding(
-                        
-                        padding: const EdgeInsets.all(15.0),
-                        child: Text('Capture', style: TextStyle(fontSize: 30),),
-                      ),
-                    ),
-                  ),
-                  Container()
-                ],
-              ),
-            )
-          ],
+        extendBody: true,
+        appBar: AppBar(
+          toolbarHeight: toolBarHeight,
+          title: Text(title),
+        ),
+        body: Container(
+          height: MediaQuery.of(context).size.height,
+          width: MediaQuery.of(context).size.width,
+          child: Image(image: imageProvider, fit: fit),
         ),
       ),
     );

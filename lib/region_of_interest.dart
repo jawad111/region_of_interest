@@ -15,9 +15,11 @@ import 'package:image/image.dart' as img;
 
 part 'src/controllers/transformation_controller.dart';
 part 'src/controllers/image_controller.dart';
-part 'src/views/camera_view.dart';
+part 'src/views/captureRegion_widget.dart';
 part 'src/views/displayCapture.dart';
-part 'src/views/displayBytes.dart';
+part 'src/models/boundingBox.dart';
+part 'src/controllers/ImageProcessingManager.dart';
+part 'src/views/live_preview.dart';
 
 
 

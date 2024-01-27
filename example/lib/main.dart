@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
@@ -21,27 +22,30 @@ Future<void> main() async {
   ));
 }
 
-callBackFunction(BuildContext context, MemoryImage orignalImage, MemoryImage imageWithBoundingBox) {
-  if (orignalImage != null) {
-    // If the picture was taken, display it on a new screen.
-    Navigator.of(context).push(MaterialPageRoute(
-      builder: (context) => DisplayPictureScreen(
-        // Pass the automatically generated path to
-        // the BytesImageView widget.
-        image: orignalImage,
-        boundingBoxPosition: {},
-      ),
-    ));
-  }
-}
+
 
 
 class TestApp extends StatelessWidget {
   final CameraDescription camera;
   const TestApp({super.key, required this.camera});
 
+
+  
+
   @override
   Widget build(BuildContext context) {
-    return  DefineRegionScreen(camera: camera, callback: callBackFunction);
+    callBackFunction(Uint8List orignalImage, Uint8List imageWithBoundingBox, BoundingBox regionOfIntrest) {
+    if (orignalImage != null) {
+      // If the picture was taken, display it on a new screen.
+      Navigator.of(context).push(MaterialPageRoute(
+        builder: (context) => DisplayPictureScreen(
+          // Pass the automatically generated path to
+          // the BytesImageView widget.
+          imageProvider: MemoryImage(imageWithBoundingBox),
+        ),
+      ));
+    }
+  }
+    return  CaptureRegionWidget(camera: camera, callback: callBackFunction);
   }
 }
