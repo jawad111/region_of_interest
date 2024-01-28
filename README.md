@@ -1,39 +1,87 @@
-<!--
-This README describes the package. If you publish this package to pub.dev,
-this README's contents appear on the landing page for your package.
+# region_of_interest
 
-For information about how to write a good package README, see the guide for
-[writing package pages](https://dart.dev/guides/libraries/writing-package-pages).
 
-For general information about developing packages, see the Dart guide for
-[creating packages](https://dart.dev/guides/libraries/create-library-packages)
-and the Flutter guide for
-[developing packages and plugins](https://flutter.dev/developing-packages).
--->
+The region_of_interest Flutter package empowers developers to effortlessly define regions of interest on a live camera view, enabling automatic calculation of precise bounding box coordinates. Designed for simplicity and versatility, this package streamlines the process of capturing image datasets easily with portable mobile devices.
 
-TODO: Put a short description of the package here that helps potential users
-know whether this package might be useful for them.
 
-## Features
+## Platform Support
 
-TODO: List what your package can do. Maybe include images, gifs, or videos.
+More platforms will be added soon!
 
-## Getting started
+| Android | iOS |
+| :-----: | :-: | 
+|   ✅    | ✅  |  
 
-TODO: List prerequisites and provide or point to information on how to
-start using the package.
+## Usage and Usecases
 
-## Usage
-
-TODO: Include short and useful examples for package users. Add longer examples
-to `/example` folder.
-
+First import Package
 ```dart
-const like = 'sample';
+import 'package:region_of_interest/region_of_interest.dart';
 ```
 
-## Additional information
 
-TODO: Tell users more about the package: where to find more information, how to
-contribute to the package, how to file issues, what response they can expect
-from the package authors, and more.
+1. Basic Usage - Capturing Images with Defined Region
+
+To capture images within a defined region on the camera view, use the CaptureRegionWidget. This widget allows users to specify the camera and callback for handling captured images and bounding box coordinates.
+
+
+```dart
+CaptureRegionWidget(
+  camera: //provide your camera description,
+  callback: (Uint8List originalImage, Uint8List imageWithBoundingBox, BoundingBox regionOfInterest) {
+    // Handle the captured images and bounding box as needed
+    // Example: Display images, send to server, etc.
+  },
+)
+```
+
+
+2. Sending to Server - Utilizing Captured Images and Bounding Box
+
+```dart
+CaptureRegionWidget(
+  camera: //provide your camera description,
+  callback: (Uint8List originalImage, Uint8List imageWithBoundingBox, BoundingBox regionOfInterest) {
+    // Handle the captured images and bounding box by sending them to a server
+    // Example: Send images and bounding box data to your server
+    YourServerCommunication.sendData(originalImage, imageWithBoundingBox, regionOfInterest);
+  },
+)
+```
+
+3. Generating Dataset - Creating a Dataset on device with Original Images and Bounding Boxes
+
+```dart
+CaptureRegionWidget(
+  camera: //provide your camera description,
+  callback: (Uint8List originalImage, Uint8List imageWithBoundingBox, BoundingBox regionOfInterest) {
+    // Handle the captured images and bounding box for generating a dataset
+    // Example: Save images and bounding box coordinates for dataset creation
+    YourDatasetGenerator.saveData(originalImage, regionOfInterest);
+  },
+)
+```
+
+4. Displaying Images - Using DisplayPictureScreen to view captured Images for Region 
+
+```dart
+CaptureRegionWidget(
+  camera: //provide your camera description,
+  callback: (Uint8List originalImage, Uint8List imageWithBoundingBox, BoundingBox regionOfInterest) {
+    // Handle the captured images and bounding box as needed
+    // Example: Display the original image and image with bounding box
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => DisplayPictureScreen(
+          originalImage: originalImage,
+          imageWithBoundingBox: imageWithBoundingBox,
+          boundingBox: regionOfInterest,
+        ),
+      ),
+    );
+  },
+)
+```
+
+See Example for full implementation.

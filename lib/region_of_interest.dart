@@ -1,3 +1,10 @@
+// Copyright (c) 2024, Jawad Bhatti. Please see the AUTHORS file
+// for details. All rights reserved. Use of this source code is governed by a
+// BSD-style license that can be found in the LICENSE file.
+
+
+///The [region_of_interest] Flutter package empowers developers to effortlessly define regions of interest on a live camera view, enabling automatic calculation of precise bounding box coordinates. Designed for simplicity and versatility, this package streamlines the process of capturing image datasets with portable mobile devices.
+
 library region_of_interest;
 
 import 'dart:async';

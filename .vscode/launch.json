@@ -8,7 +8,7 @@
             "name": "region_of_interest",
             "request": "launch",
             "type": "dart",
-            "program": "example/lib/main.dart"
+            "program": "example/lib/example.dart"
         },
         {
             "name": "region_of_interest (profile mode)",

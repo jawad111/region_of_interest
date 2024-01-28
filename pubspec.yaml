@@ -1,5 +1,5 @@
 name: region_of_interest
-description: The region_of_interest Flutter package empowers developers to effortlessly define regions of interest on a live camera view, enabling automatic calculation of precise bounding box coordinates. Designed for simplicity and versatility, this package streamlines the process of capturing image datasets with an intuitive interface and customizable features.
+description: The region_of_interest Flutter package empowers developers to effortlessly define regions of interest on a live camera view, enabling automatic calculation of precise bounding box coordinates. Designed for simplicity and versatility, this package streamlines the process of capturing image datasets with portable mobile devices.
 version: 0.0.1
 homepage: https://github.com/jawad111/region_of_interest
 
