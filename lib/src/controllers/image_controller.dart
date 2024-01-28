@@ -6,6 +6,8 @@ class ImageController {
   /// Retrieves image information asynchronously.
   ///
   /// [image]: The image for which information needs to be retrieved.
+  ///
+  /// Returns a [Future] that completes with [ImageInfo].
   static Future<ImageInfo> getImageInformation(Image image) {
     Completer<ImageInfo> completer = Completer();
     image.image.resolve(ImageConfiguration()).addListener(
@@ -21,6 +23,8 @@ class ImageController {
   /// Retrieves the size of an image asynchronously.
   ///
   /// [image]: The image for which the size needs to be retrieved.
+  ///
+  /// Returns a [Future] that completes with [Size].
   static Future<Size> getImageSize(Image image) async {
     ImageInfo imageInformation = await getImageInformation(image);
     return Size(imageInformation.image.width.toDouble(), imageInformation.image.height.toDouble());
@@ -29,6 +33,8 @@ class ImageController {
   /// Converts a Uint8List to a MemoryImage.
   ///
   /// [uint8List]: The Uint8List representing the image data.
+  ///
+  /// Returns a [Future] that completes with [MemoryImage].
   static Future<MemoryImage> uint8ListToMemoryImage(Uint8List uint8List) async {
     // Convert Uint8List to ByteData
     ByteData byteData = ByteData.view(uint8List.buffer);
@@ -55,6 +61,8 @@ class ImageController {
   /// Retrieves the size of an image from a list of bytes asynchronously.
   ///
   /// [bytes]: The list of bytes representing the image data.
+  ///
+  /// Returns a [Future] that completes with [Size].
   static Future<Size> getImageSizeFromBytes(List<int> bytes) async {
     ui.Image decodedImg = await decodeImageFromList(Uint8List.fromList(bytes));
     return Size(decodedImg.width.toDouble(), decodedImg.height.toDouble());
@@ -64,6 +72,8 @@ class ImageController {
   ///
   /// [xFile]: The XFile representing the image file.
   /// [rectanglePoints]: The bounding box coordinates.
+  ///
+  /// Returns a [Future] that completes with [Uint8List].
   static Future<Uint8List> drawOnImage(XFile xFile, BoundingBox rectanglePoints) async {
     // Read the image file
     List<int> bytes = await File(xFile.path).readAsBytes();

@@ -1,16 +1,23 @@
 part of region_of_interest;
 
-/// A widget that allows users to define a rectangular region and capture a picture using a given camera.
+/// A comprehensive widget for capturing images within a user-defined rectangular region.
+///
+/// This widget serves as the primary entry point for users, allowing them to interact with
+/// the camera, define a rectangular region of interest, and capture images within that region.
+///
+/// Users need to provide the [camera] description, specifying the camera to be utilized,
+/// and a [callback] function, which is invoked when an image is captured within the defined region.
 class CaptureRegionWidget extends StatefulWidget {
   /// The description of the camera to be used.
   final CameraDescription camera;
 
-  /// Callback function that is called when an image is captured with the defined region.
+  /// Callback function invoked when an image is captured within the defined region.
   final OnImageCaptured callback;
 
-  /// Creates a [CaptureRegionWidget] widget.
+  /// Creates a [CaptureRegionWidget] instance.
   ///
   /// The [camera] parameter is required and represents the description of the camera to be used.
+  ///
   /// The [callback] parameter is required and is a callback function that is invoked when an image
   /// is captured with the defined region.
   const CaptureRegionWidget({Key? key, required this.camera, required this.callback}) : super(key: key);
@@ -23,7 +30,7 @@ class _CaptureRegionWidgetState extends State<CaptureRegionWidget> {
   late CameraController _cameraController;
   late Future<void> _initializeCameraControllerFuture;
 
-  /// Initialize the camera.
+  /// Initialize the camera and prepare for image capturing.
   Future<void> initCamera(CameraDescription cameraDescription) async {
     // Initialize Camera Controller
     _cameraController = CameraController(

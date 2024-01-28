@@ -1,13 +1,11 @@
 import 'dart:async';
 import 'dart:io';
 import 'dart:typed_data';
-
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:region_of_interest/region_of_interest.dart';
 
-
-Future<void> main() async {
+void main() async {
   // Ensure that plugin services are initialized so that `availableCameras()`
   // can be called before `runApp()`
   WidgetsFlutterBinding.ensureInitialized();
@@ -17,35 +15,111 @@ Future<void> main() async {
 
   // Pass a specific camera from the list of available cameras.
   runApp(MaterialApp(
-    home: TestApp(camera: cameras[0],),
+    home: MyApp(camera: cameras[0]),
     debugShowCheckedModeBanner: false,
   ));
 }
 
-
-
-
-class TestApp extends StatelessWidget {
+class MyApp extends StatelessWidget {
   final CameraDescription camera;
-  const TestApp({super.key, required this.camera});
 
-
-  
+  const MyApp({Key? key, required this.camera}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    callBackFunction(Uint8List orignalImage, Uint8List imageWithBoundingBox, BoundingBox regionOfIntrest) {
-    if (orignalImage != null) {
-      // If the picture was taken, display it on a new screen.
-      Navigator.of(context).push(MaterialPageRoute(
-        builder: (context) => DisplayPictureScreen(
-          // Pass the automatically generated path to
-          // the BytesImageView widget.
-          imageProvider: MemoryImage(imageWithBoundingBox),
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Capture Region Demo'),
+      ),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            ElevatedButton(
+              onPressed: () {
+                // Use Case 1: Send images and bounding box to API
+                _sendToApi(context);
+              },
+              child: Text('Send to API'),
+            ),
+            SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: () {
+                // Use Case 2: Generate dataset using original image and bounding box
+                _generateDataset(context);
+              },
+              child: Text('Generate Dataset'),
+            ),
+            SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: () {
+                // Use Case 3: Display captured image using existing class
+                _displayCapturedImage(context);
+              },
+              child: Text('Display Captured Image'),
+            ),
+          ],
         ),
-      ));
-    }
+      ),
+    );
   }
-    return  CaptureRegionWidget(camera: camera, callback: callBackFunction);
+
+  // Use Case 1: Send images and bounding box to API
+  void _sendToApi(BuildContext context) async {
+    OnImageCaptured callback = (Uint8List originalImage, Uint8List imageWithBoundingBox, BoundingBox regionOfInterest) {
+      // Handle the captured images and bounding box as needed
+      // Send the original image, image with bounding box, and bounding box to the API
+      // Replace the following code with your API call logic
+      print('Sending to API:');
+      print('Original Image Size: ${originalImage.lengthInBytes} bytes');
+      print('Bounding Box: $regionOfInterest');
+    };
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => CaptureRegionWidget(camera: camera, callback: callback),
+      ),
+    );
+  }
+
+  // Use Case 2: Generate dataset using original image and bounding box
+  void _generateDataset(BuildContext context) async {
+    OnImageCaptured callback = (Uint8List originalImage, Uint8List imageWithBoundingBox, BoundingBox regionOfInterest) {
+      // Handle the captured images and bounding box as needed
+      // Generate a dataset using the original image and bounding box
+      // Replace the following code with your dataset generation logic
+      print('Generating Dataset:');
+      print('Original Image Size: ${originalImage.lengthInBytes} bytes');
+      print('Bounding Box: $regionOfInterest');
+    };
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => CaptureRegionWidget(camera: camera, callback: callback),
+      ),
+    );
+  }
+
+  // Use Case 3: Display captured image using existing class
+  void _displayCapturedImage(BuildContext context) async {
+    OnImageCaptured callback = (Uint8List originalImage, Uint8List imageWithBoundingBox, BoundingBox regionOfInterest) {
+      // Handle the captured images and bounding box as needed
+      // Display the captured image using the existing class
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => DisplayPictureScreen(imageProvider: MemoryImage(originalImage)),
+        ),
+      );
+    };
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => CaptureRegionWidget(camera: camera, callback: callback),
+      ),
+    );
   }
 }

@@ -1,12 +1,20 @@
 part of region_of_interest;
 
-
+/// Represents a bounding box with four corner points.
 class BoundingBox {
-  final Offset topLeft;     // Top-left corner
-  final Offset topRight;    // Top-right corner
-  final Offset bottomLeft;  // Bottom-left corner
-  final Offset bottomRight; // Bottom-right corner
+  /// Top-left corner of the bounding box.
+  final Offset topLeft;
 
+  /// Top-right corner of the bounding box.
+  final Offset topRight;
+
+  /// Bottom-left corner of the bounding box.
+  final Offset bottomLeft;
+
+  /// Bottom-right corner of the bounding box.
+  final Offset bottomRight;
+
+  /// Constructs a [BoundingBox] instance with the specified corner points.
   BoundingBox({
     required this.topLeft,
     required this.topRight,
@@ -14,6 +22,7 @@ class BoundingBox {
     required this.bottomRight,
   });
 
+  /// Creates a [BoundingBox] instance from a JSON map.
   factory BoundingBox.fromJson(Map<String, dynamic> json) {
     return BoundingBox(
       topLeft: Offset(json['topLeftX'] ?? 0.0, json['topLeftY'] ?? 0.0),
@@ -23,6 +32,7 @@ class BoundingBox {
     );
   }
 
+  /// Converts the [BoundingBox] instance to a JSON map.
   Map<String, dynamic> toJson() {
     return {
       'topLeftX': topLeft.dx,
