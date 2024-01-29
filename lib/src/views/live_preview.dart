@@ -124,7 +124,7 @@ class _PreviewState extends State<Preview> {
                           alignment: Alignment.topLeft,
                           child: Container(
                             color: Colors.green,
-                            child: Text(
+                            child: const Text(
                               'ITEM',
                               style: TextStyle(color: Colors.white),
                             ),

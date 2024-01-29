@@ -22,7 +22,7 @@ class ImageProcessingManager {
   /// [callback]: The user-defined callback function to handle the processed image data.
   static process(XFile image, Map<String, double> positionOnScreen, Size screenDisplaySize, OnImageCaptured callback) async {
     // Read bytes of the saved image
-    Uint8List rawImageBytes = await File(image?.path ?? "").readAsBytes();
+    Uint8List rawImageBytes = await File(image.path).readAsBytes();
 
     // Define Screen Start Interaction and End Interaction points
     Offset rectangleStartPoint = Offset(positionOnScreen['x'] ?? 0.0, positionOnScreen['y'] ?? 0.0);
@@ -38,7 +38,7 @@ class ImageProcessingManager {
     );
 
     // Draw bounding box on image bytes
-    Uint8List imageBytesWithRegion = await ImageController.drawOnImage(image ?? XFile(""), rectanglePoints);
+    Uint8List imageBytesWithRegion = await ImageController.drawOnImage(image, rectanglePoints);
 
     // Pass data to Callback Function defined by the user
     callback(rawImageBytes, imageBytesWithRegion, rectanglePoints);
