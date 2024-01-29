@@ -93,9 +93,7 @@ class _PreviewState extends State<Preview> {
             child: Stack(
               alignment: AlignmentDirectional.center,
               children: [
-                widget.cameraController == null
-                    ? Container()
-                    : Container(
+                Container(
                         height: MediaQuery.of(context).size.height,
                         width: MediaQuery.of(context).size.width,
                         child: CameraPreview(widget.cameraController),

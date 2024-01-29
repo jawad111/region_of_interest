@@ -7,11 +7,11 @@ import 'package:region_of_interest/region_of_interest.dart';
 void main() {
   testWidgets('DisplayPictureScreen widget displays image with correct title', (WidgetTester tester) async {
     // Create a key for finding the widget.
-    final Key titleKey = Key('display_picture_title');
+    const Key titleKey = Key('display_picture_title');
 
     // Create a MaterialApp to hold the widget.
     await tester.pumpWidget(
-      MaterialApp(
+      const MaterialApp(
         home: DisplayPictureScreen(
           imageProvider: AssetImage('assets/test_image.jpg'),
           title: 'Test Title',

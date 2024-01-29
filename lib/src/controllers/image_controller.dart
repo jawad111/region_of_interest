@@ -41,7 +41,7 @@ class ImageController {
   /// Returns a [Future] that completes with [MemoryImage].
   static Future<MemoryImage> uint8ListToMemoryImage(Uint8List uint8List) async {
     // Convert Uint8List to ByteData
-    ByteData byteData = ByteData.view(uint8List.buffer);
+    //ByteData byteData = ByteData.view(uint8List.buffer);
 
     // Decode Image
     ui.Codec codec = await ui.instantiateImageCodec(uint8List);

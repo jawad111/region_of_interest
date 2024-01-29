@@ -1,5 +1,4 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:region_of_interest/region_of_interest.dart';
 
 // Tests Need to be refined in upcoming patches
 

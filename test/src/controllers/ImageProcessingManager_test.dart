@@ -17,10 +17,10 @@ void main() {
 
 
     final rectanglePoints = BoundingBox(
-      topLeft: Offset(10.0, 20.0),
-      topRight: Offset(30.0, 20.0),
-      bottomLeft: Offset(10.0, 40.0),
-      bottomRight: Offset(30.0, 40.0),
+      topLeft: const Offset(10.0, 20.0),
+      topRight: const Offset(30.0, 20.0),
+      bottomLeft: const Offset(10.0, 40.0),
+      bottomRight: const Offset(30.0, 40.0),
     );
 
     final rawImageBytes = Uint8List.fromList([1, 2, 3, 4]);
@@ -28,17 +28,17 @@ void main() {
     when(ImageController.drawOnImage(mockXFile, rectanglePoints)).thenAnswer((_) async => rawImageBytes);
 
     final expectedRectanglePoints = BoundingBox(
-      topLeft: Offset(10.0, 20.0),
-      topRight: Offset(30.0, 20.0),
-      bottomLeft: Offset(10.0, 40.0),
-      bottomRight: Offset(30.0, 40.0),
+      topLeft: const Offset(10.0, 20.0),
+      topRight: const Offset(30.0, 20.0),
+      bottomLeft: const Offset(10.0, 40.0),
+      bottomRight: const Offset(30.0, 40.0),
     );
 
-    final screenDisplaySize = Size(100.0, 100.0);
+    const screenDisplaySize = Size(100.0, 100.0);
     final image = img.Image(width: 100, height: 100);
     final imageBytesWithRegion = Uint8List.fromList([5, 6, 7, 8]);
 
-    when(ImageController.getImageSizeFromBytes(rawImageBytes)).thenAnswer((_) async => Size(100.0, 100.0));
+    when(ImageController.getImageSizeFromBytes(rawImageBytes)).thenAnswer((_) async => const Size(100.0, 100.0));
 
     bool callbackCalled = false;
     void callback(Uint8List originalImage, Uint8List imageWithBoundingBox, BoundingBox regionOfInterest) {
