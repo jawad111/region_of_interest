@@ -15,11 +15,11 @@ Future<Uint8List> mockImage(String imageUrl) async {
       if (response.statusCode == 200) {
         return response.bodyBytes;
       } else {
-        print('Failed to load image. HTTP Status Code: ${response.statusCode}');
+        //print('Failed to load image. HTTP Status Code: ${response.statusCode}');
         return Uint8List(0);
       }
     } catch (error) {
-      print('Error loading image: $error');
+      //print('Error loading image: $error');
       return Uint8List(0);
     }
   }
