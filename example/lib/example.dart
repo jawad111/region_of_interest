@@ -64,7 +64,8 @@ class MyApp extends StatelessWidget {
 
   // Use Case 1: Send images and bounding box to API
   void _sendToApi(BuildContext context) async {
-    callback(Uint8List originalImage, Uint8List imageWithBoundingBox, BoundingBox regionOfInterest) {
+    callback(Uint8List originalImage, Uint8List imageWithBoundingBox,
+        BoundingBox regionOfInterest) {
       // Handle the captured images and bounding box as needed
       // Send the original image, image with bounding box, and bounding box to the API
       // Replace the following code with your API call logic
@@ -76,14 +77,16 @@ class MyApp extends StatelessWidget {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => CaptureRegionWidget(camera: camera, callback: callback),
+        builder: (context) =>
+            CaptureRegionWidget(camera: camera, callback: callback),
       ),
     );
   }
 
   // Use Case 2: Generate dataset using original image and bounding box
   void _generateDataset(BuildContext context) async {
-    callback(Uint8List originalImage, Uint8List imageWithBoundingBox, BoundingBox regionOfInterest) {
+    callback(Uint8List originalImage, Uint8List imageWithBoundingBox,
+        BoundingBox regionOfInterest) {
       // Handle the captured images and bounding box as needed
       // Generate a dataset using the original image and bounding box
       // Replace the following code with your dataset generation logic
@@ -95,20 +98,23 @@ class MyApp extends StatelessWidget {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => CaptureRegionWidget(camera: camera, callback: callback),
+        builder: (context) =>
+            CaptureRegionWidget(camera: camera, callback: callback),
       ),
     );
   }
 
   // Use Case 3: Display captured image using existing class
   void _displayCapturedImage(BuildContext context) async {
-    callback(Uint8List originalImage, Uint8List imageWithBoundingBox, BoundingBox regionOfInterest) {
+    callback(Uint8List originalImage, Uint8List imageWithBoundingBox,
+        BoundingBox regionOfInterest) {
       // Handle the captured images and bounding box as needed
       // Display the captured image using the existing class
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => DisplayPictureScreen(imageProvider: MemoryImage(imageWithBoundingBox)),
+          builder: (context) => DisplayPictureScreen(
+              imageProvider: MemoryImage(imageWithBoundingBox)),
         ),
       );
     }
@@ -116,7 +122,8 @@ class MyApp extends StatelessWidget {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => CaptureRegionWidget(camera: camera, callback: callback),
+        builder: (context) =>
+            CaptureRegionWidget(camera: camera, callback: callback),
       ),
     );
   }

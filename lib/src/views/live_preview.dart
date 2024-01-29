@@ -17,7 +17,9 @@ class Preview extends StatefulWidget {
   /// The [cameraController] parameter is required and represents the controller for the camera.
   /// The [callback] parameter is required and is a callback function that is invoked when an image
   /// is captured with the defined region.
-  const Preview({Key? key, required this.cameraController, required this.callback}) : super(key: key);
+  const Preview(
+      {Key? key, required this.cameraController, required this.callback})
+      : super(key: key);
 
   @override
   State<Preview> createState() => _PreviewState();
@@ -72,7 +74,8 @@ class _PreviewState extends State<Preview> {
               initialYPosition = details.focalPoint.dy;
             },
             onInteractionUpdate: (details) {
-              updateRegionPosition(details.focalPoint.dx, details.focalPoint.dy);
+              updateRegionPosition(
+                  details.focalPoint.dx, details.focalPoint.dy);
             },
             onInteractionEnd: (details) async {
               try {
@@ -80,11 +83,12 @@ class _PreviewState extends State<Preview> {
                 XFile image = await widget.cameraController.takePicture();
 
                 // Get Device Layout Screen Size
-                Size screenDisplaySize =
-                    Size(MediaQuery.of(context).size.width, MediaQuery.of(context).size.height);
+                Size screenDisplaySize = Size(MediaQuery.of(context).size.width,
+                    MediaQuery.of(context).size.height);
 
                 // Process Image and Pass the output to the user-defined Callback
-                ImageProcessingManager.process(image, _position, screenDisplaySize, widget.callback);
+                ImageProcessingManager.process(
+                    image, _position, screenDisplaySize, widget.callback);
               } on CameraException catch (error) {
                 // Handle CameraException
                 CameraException(error.code, error.toString());
@@ -94,10 +98,10 @@ class _PreviewState extends State<Preview> {
               alignment: AlignmentDirectional.center,
               children: [
                 Container(
-                        height: MediaQuery.of(context).size.height,
-                        width: MediaQuery.of(context).size.width,
-                        child: CameraPreview(widget.cameraController),
-                      ),
+                  height: MediaQuery.of(context).size.height,
+                  width: MediaQuery.of(context).size.width,
+                  child: CameraPreview(widget.cameraController),
+                ),
                 if (_boundingBoxVisible)
                   Positioned(
                     left: _position['x'],

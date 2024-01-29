@@ -8,21 +8,26 @@ import 'package:region_of_interest/region_of_interest.dart';
 // Tests Need to be refined in upcoming patches
 
 void main() {
-  testWidgets('CaptureRegionWidget initializes camera and displays preview', (WidgetTester tester) async {
+  testWidgets('CaptureRegionWidget initializes camera and displays preview',
+      (WidgetTester tester) async {
     //Mock Data
     final Uint8List image = Uint8List(0);
     final Uint8List image2 = Uint8List(0);
 
-
-     final boundingBox = BoundingBox(
+    final boundingBox = BoundingBox(
       topLeft: const Offset(10.0, 20.0),
       topRight: const Offset(30.0, 20.0),
       bottomLeft: const Offset(10.0, 40.0),
       bottomRight: const Offset(30.0, 40.0),
     );
-  
+
     // Build our widget and trigger a frame.
-    await tester.pumpWidget(CaptureRegionWidget(camera: const CameraDescription(name: 'mock', lensDirection: CameraLensDirection.back, sensorOrientation: 90), callback: (image, image2, boundingBox){}));
+    await tester.pumpWidget(CaptureRegionWidget(
+        camera: const CameraDescription(
+            name: 'mock',
+            lensDirection: CameraLensDirection.back,
+            sensorOrientation: 90),
+        callback: (image, image2, boundingBox) {}));
 
     // Expect CircularProgressIndicator while initializing camera.
     expect(find.byType(CircularProgressIndicator), findsOneWidget);

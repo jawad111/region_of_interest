@@ -31,8 +31,10 @@ class BoundingBox {
     return BoundingBox(
       topLeft: Offset(json['topLeftX'] ?? 0.0, json['topLeftY'] ?? 0.0),
       topRight: Offset(json['topRightX'] ?? 0.0, json['topRightY'] ?? 0.0),
-      bottomLeft: Offset(json['bottomLeftX'] ?? 0.0, json['bottomLeftY'] ?? 0.0),
-      bottomRight: Offset(json['bottomRightX'] ?? 0.0, json['bottomRightY'] ?? 0.0),
+      bottomLeft:
+          Offset(json['bottomLeftX'] ?? 0.0, json['bottomLeftY'] ?? 0.0),
+      bottomRight:
+          Offset(json['bottomRightX'] ?? 0.0, json['bottomRightY'] ?? 0.0),
     );
   }
 

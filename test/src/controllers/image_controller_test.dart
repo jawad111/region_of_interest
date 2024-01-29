@@ -5,30 +5,30 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:region_of_interest/region_of_interest.dart';
 
-
 // Tests Need to be refined in upcoming patches
 
 Future<Uint8List> mockImage(String imageUrl) async {
-    try {
-      final response = await http.get(Uri.parse(imageUrl));
+  try {
+    final response = await http.get(Uri.parse(imageUrl));
 
-      if (response.statusCode == 200) {
-        return response.bodyBytes;
-      } else {
-        //print('Failed to load image. HTTP Status Code: ${response.statusCode}');
-        return Uint8List(0);
-      }
-    } catch (error) {
-      //print('Error loading image: $error');
+    if (response.statusCode == 200) {
+      return response.bodyBytes;
+    } else {
+      //print('Failed to load image. HTTP Status Code: ${response.statusCode}');
       return Uint8List(0);
     }
+  } catch (error) {
+    //print('Error loading image: $error');
+    return Uint8List(0);
   }
+}
 
 void main() {
   group('ImageController Tests', () {
     test('getImageInformation should complete with ImageInfo', () async {
       // Arrange
-      final Uint8List imageBytes = await mockImage("https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png");
+      final Uint8List imageBytes = await mockImage(
+          "https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png");
       final Image image = Image.memory(imageBytes);
 
       // Act
@@ -41,7 +41,8 @@ void main() {
     test('getImageSize should complete with Size', () async {
       // Arrange
       // Arrange
-      final Uint8List imageBytes = await mockImage("https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png");
+      final Uint8List imageBytes = await mockImage(
+          "https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png");
       final Image image = Image.memory(imageBytes);
 
       // Act
@@ -75,7 +76,8 @@ void main() {
 
     test('drawOnImage should complete with Uint8List', () async {
       // Arrange
-      final XFile xFile  = XFile("https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png");
+      final XFile xFile = XFile(
+          "https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png");
       final boundingBox = BoundingBox(
         topLeft: const Offset(0, 0),
         topRight: const Offset(1, 0),

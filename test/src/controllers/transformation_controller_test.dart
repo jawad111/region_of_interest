@@ -13,7 +13,8 @@ void main() {
     const startPoint = Offset(30.0, 40.0);
 
     // Act
-    final transformedPoint = pkg.TransformationController.transformPoint(startPoint, primaryCoordinateSystem, secondaryCoordinateSystem);
+    final transformedPoint = pkg.TransformationController.transformPoint(
+        startPoint, primaryCoordinateSystem, secondaryCoordinateSystem);
 
     // Assert
     expect(transformedPoint, equals(const Offset(60.0, 80.0)));
@@ -25,7 +26,8 @@ void main() {
     const factor = 2.0;
 
     // Act
-    final decreasedResolution = pkg.TransformationController.decreaseImageRatio(originalResolution, factor);
+    final decreasedResolution = pkg.TransformationController.decreaseImageRatio(
+        originalResolution, factor);
 
     // Assert
     expect(decreasedResolution, equals(const Size(100.0, 75.0)));
@@ -37,7 +39,8 @@ void main() {
     const factor = 2.0;
 
     // Act
-    final increasedResolution = pkg.TransformationController.increaseImageRatio(originalResolution, factor);
+    final increasedResolution = pkg.TransformationController.increaseImageRatio(
+        originalResolution, factor);
 
     // Assert
     expect(increasedResolution, equals(const Size(400.0, 300.0)));
@@ -49,7 +52,8 @@ void main() {
     const edgePoint2 = Offset(30.0, 40.0);
 
     // Act
-    final centerPoint = pkg.TransformationController.calculateCenterOfRectangle(edgePoint1, edgePoint2);
+    final centerPoint = pkg.TransformationController.calculateCenterOfRectangle(
+        edgePoint1, edgePoint2);
 
     // Assert
     expect(centerPoint, equals(const Offset(20.0, 30.0)));
@@ -61,15 +65,19 @@ void main() {
     const endPoint = Offset(30.0, 40.0);
 
     // Act
-    final regionOfInterest = pkg.TransformationController.calculateRegionOfInterestOnScreen(startPoint, endPoint);
+    final regionOfInterest =
+        pkg.TransformationController.calculateRegionOfInterestOnScreen(
+            startPoint, endPoint);
 
     // Assert
-    expect(regionOfInterest, equals([
-      const Offset(10.0, 20.0),
-      const Offset(40.0, 20.0),
-      const Offset(10.0, 60.0),
-      const Offset(40.0, 60.0),
-    ]));
+    expect(
+        regionOfInterest,
+        equals([
+          const Offset(10.0, 20.0),
+          const Offset(40.0, 20.0),
+          const Offset(10.0, 60.0),
+          const Offset(40.0, 60.0),
+        ]));
   });
 
   test('TransformationController - Transform Region of Interest on Image', () {
@@ -80,15 +88,19 @@ void main() {
     const imageResolution = Size(800.0, 600.0);
 
     // Act
-    final transformedRegion = pkg.TransformationController.transformRegionOfInterestOnImage(startPoint, endPoint, screenResolution, imageResolution);
+    final transformedRegion =
+        pkg.TransformationController.transformRegionOfInterestOnImage(
+            startPoint, endPoint, screenResolution, imageResolution);
 
     // Assert
-    expect(transformedRegion, equals(pkg.BoundingBox(
-      topLeft: const Offset(20.0, 40.0),
-      topRight: const Offset(80.0, 40.0),
-      bottomLeft: const Offset(20.0, 120.0),
-      bottomRight: const Offset(80.0, 120.0),
-    )));
+    expect(
+        transformedRegion,
+        equals(pkg.BoundingBox(
+          topLeft: const Offset(20.0, 40.0),
+          topRight: const Offset(80.0, 40.0),
+          bottomLeft: const Offset(20.0, 120.0),
+          bottomRight: const Offset(80.0, 120.0),
+        )));
   });
 
   test('TransformationController - Bounding Box to Point List', () {
@@ -101,14 +113,17 @@ void main() {
     );
 
     // Act
-    final pointList = pkg.TransformationController.boundingBoxToPointList(boundingBox);
+    final pointList =
+        pkg.TransformationController.boundingBoxToPointList(boundingBox);
 
     // Assert
-    expect(pointList, equals([
-      img.Point(20.0, 40.0),
-      img.Point(80.0, 40.0),
-      img.Point(80.0, 120.0),
-      img.Point(20.0, 120.0),
-    ]));
+    expect(
+        pointList,
+        equals([
+          img.Point(20.0, 40.0),
+          img.Point(80.0, 40.0),
+          img.Point(80.0, 120.0),
+          img.Point(20.0, 120.0),
+        ]));
   });
 }

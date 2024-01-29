@@ -24,7 +24,9 @@ class CaptureRegionWidget extends StatefulWidget {
   ///
   /// The [callback] parameter is required and is a callback function that is invoked when an image
   /// is captured with the defined region.
-  const CaptureRegionWidget({Key? key, required this.camera, required this.callback}) : super(key: key);
+  const CaptureRegionWidget(
+      {Key? key, required this.camera, required this.callback})
+      : super(key: key);
 
   @override
   State<CaptureRegionWidget> createState() => _CaptureRegionWidgetState();
@@ -41,7 +43,9 @@ class _CaptureRegionWidgetState extends State<CaptureRegionWidget> {
       cameraDescription,
       ResolutionPreset.high,
       enableAudio: false,
-      imageFormatGroup: Platform.isAndroid ? ImageFormatGroup.nv21 : ImageFormatGroup.bgra8888,
+      imageFormatGroup: Platform.isAndroid
+          ? ImageFormatGroup.nv21
+          : ImageFormatGroup.bgra8888,
     );
 
     // Next, initialize the controller. This returns a Future.
@@ -69,7 +73,8 @@ class _CaptureRegionWidgetState extends State<CaptureRegionWidget> {
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
           // If the Future is complete, display the preview.
-          return Preview(cameraController: _cameraController, callback: widget.callback);
+          return Preview(
+              cameraController: _cameraController, callback: widget.callback);
         } else {
           // Otherwise, display a loading indicator.
           return const Center(child: CircularProgressIndicator());

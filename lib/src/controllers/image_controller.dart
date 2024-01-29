@@ -6,7 +6,6 @@ part of region_of_interest;
 
 /// A utility class responsible for manipulating images and retrieving image information.
 class ImageController {
-
   /// Retrieves image information asynchronously.
   ///
   /// [image]: The image for which information needs to be retrieved.
@@ -31,7 +30,8 @@ class ImageController {
   /// Returns a [Future] that completes with [Size].
   static Future<Size> getImageSize(Image image) async {
     ImageInfo imageInformation = await getImageInformation(image);
-    return Size(imageInformation.image.width.toDouble(), imageInformation.image.height.toDouble());
+    return Size(imageInformation.image.width.toDouble(),
+        imageInformation.image.height.toDouble());
   }
 
   /// Converts a Uint8List to a MemoryImage.
@@ -53,7 +53,8 @@ class ImageController {
     ui.Image uiImage = frameInfo.image;
 
     // Convert ui.Image to ByteData
-    ByteData? byteDataFromImage = await uiImage.toByteData(format: ui.ImageByteFormat.png);
+    ByteData? byteDataFromImage =
+        await uiImage.toByteData(format: ui.ImageByteFormat.png);
     Uint8List imageData = byteDataFromImage!.buffer.asUint8List();
 
     // Create MemoryImage from Uint8List
@@ -78,16 +79,21 @@ class ImageController {
   /// [rectanglePoints]: The bounding box coordinates.
   ///
   /// Returns a [Future] that completes with [Uint8List].
-  static Future<Uint8List> drawOnImage(XFile xFile, BoundingBox rectanglePoints) async {
+  static Future<Uint8List> drawOnImage(
+      XFile xFile, BoundingBox rectanglePoints) async {
     // Read the image file
     List<int> bytes = await File(xFile.path).readAsBytes();
     img.Image image = img.decodeImage(Uint8List.fromList(bytes))!;
 
     //Bounding box to list of img.Point
-    List<img.Point> polygonPoints =  TransformationController.boundingBoxToPointList(rectanglePoints);
+    List<img.Point> polygonPoints =
+        TransformationController.boundingBoxToPointList(rectanglePoints);
 
     // Perform drawing operations on the image
-    img.drawPolygon(image, vertices: polygonPoints,  color: img.ColorRgb8(0, 255, 0), thickness: 5); // Green line
+    img.drawPolygon(image,
+        vertices: polygonPoints,
+        color: img.ColorRgb8(0, 255, 0),
+        thickness: 5); // Green line
 
     // Convert the modified image to Uint8List
     Uint8List? modifiedImageData = img.encodePng(image);

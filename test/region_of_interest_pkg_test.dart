@@ -3,7 +3,9 @@ import 'package:flutter_test/flutter_test.dart';
 // Tests Need to be refined in upcoming patches
 
 void main() {
-  testWidgets('CaptureRegionWidget captures and displays image with region of interest', (WidgetTester tester) async {
+  testWidgets(
+      'CaptureRegionWidget captures and displays image with region of interest',
+      (WidgetTester tester) async {
     // Build our app and trigger a frame.
     //await tester.pumpWidget(CaptureRegionWidget());
 

@@ -5,7 +5,8 @@ import 'package:region_of_interest/region_of_interest.dart';
 // Tests Need to be refined in upcoming patches
 
 void main() {
-  testWidgets('DisplayPictureScreen widget displays image with correct title', (WidgetTester tester) async {
+  testWidgets('DisplayPictureScreen widget displays image with correct title',
+      (WidgetTester tester) async {
     // Create a key for finding the widget.
     const Key titleKey = Key('display_picture_title');
 

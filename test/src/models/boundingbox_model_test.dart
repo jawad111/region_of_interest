@@ -36,7 +36,8 @@ void main() {
       double decreaseFactor = 2.0;
 
       // Calculate the decreased resolution
-      Size decreasedResolution = TransformationController.decreaseImageRatio(originalResolution, decreaseFactor);
+      Size decreasedResolution = TransformationController.decreaseImageRatio(
+          originalResolution, decreaseFactor);
 
       // Check if the decreased resolution is correct
       expect(decreasedResolution, equals(const Size(400.0, 300.0)));
@@ -50,10 +51,19 @@ void main() {
       Offset endPoint = const Offset(50, 50);
 
       // Calculate the region of interest on the screen
-      List<Offset> regionOnScreen = TransformationController.calculateRegionOfInterestOnScreen(startPoint, endPoint);
+      List<Offset> regionOnScreen =
+          TransformationController.calculateRegionOfInterestOnScreen(
+              startPoint, endPoint);
 
       // Check if the calculated region on the screen is correct
-      expect(regionOnScreen, equals([const Offset(100, 200), const Offset(150, 200), const Offset(100, 250), const Offset(150, 250)]));
+      expect(
+          regionOnScreen,
+          equals([
+            const Offset(100, 200),
+            const Offset(150, 200),
+            const Offset(100, 250),
+            const Offset(150, 250)
+          ]));
     });
 
     // Add tests for other functions as needed
@@ -68,7 +78,8 @@ void main() {
       Size imageResolution = const Size(800, 600);
 
       // Transform the region of interest on the screen to the image
-      BoundingBox transformedRegion = TransformationController.transformRegionOfInterestOnImage(
+      BoundingBox transformedRegion =
+          TransformationController.transformRegionOfInterestOnImage(
         startPoint,
         endPoint,
         screenResolution,

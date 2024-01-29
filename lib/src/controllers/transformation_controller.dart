@@ -6,13 +6,13 @@ part of region_of_interest;
 
 /// A utility class responsible for transforming screen points to image points and performing related operations.
 class TransformationController {
-
   /// Transforms a point from the primary coordinate system to the secondary coordinate system.
   ///
   /// [point]: The point in the primary coordinate system.
   /// [primaryCoordinateSystem]: The size of the primary coordinate system.
   /// [secondaryCoordinateSystem]: The size of the secondary coordinate system.
-  static Offset transformPoint(Offset point, Size primaryCoordinateSystem, Size secondaryCoordinateSystem) {
+  static Offset transformPoint(Offset point, Size primaryCoordinateSystem,
+      Size secondaryCoordinateSystem) {
     double primaryWidth = primaryCoordinateSystem.width;
     double primaryHeight = primaryCoordinateSystem.height;
     double secondaryWidth = secondaryCoordinateSystem.width;
@@ -52,7 +52,8 @@ class TransformationController {
   /// [rectangleEdgePoint2]: Another edge point of the rectangle.
   ///
   /// Returns the [Offset] representing the center point of the rectangle.
-  static Offset calculateCenterOfRectangle(Offset rectangleEdgePoint1, Offset rectangleEdgePoint2) {
+  static Offset calculateCenterOfRectangle(
+      Offset rectangleEdgePoint1, Offset rectangleEdgePoint2) {
     double midx = (rectangleEdgePoint1.dx + rectangleEdgePoint2.dx) / 2;
     double midy = (rectangleEdgePoint1.dy + rectangleEdgePoint2.dy) / 2;
     return Offset(midx, midy);
@@ -64,11 +65,13 @@ class TransformationController {
   /// [endPoint]: The ending point of the region.
   ///
   /// Returns a list of [Offset] representing the rectangular region of interest on the screen.
-  static List<Offset> calculateRegionOfInterestOnScreen(Offset startPoint, Offset endPoint) {
+  static List<Offset> calculateRegionOfInterestOnScreen(
+      Offset startPoint, Offset endPoint) {
     Offset topLeft = startPoint;
     Offset topRight = Offset(startPoint.dx + endPoint.dx, startPoint.dy);
     Offset bottomLeft = Offset(startPoint.dx, startPoint.dy + endPoint.dy);
-    Offset bottomRight = Offset(startPoint.dx + endPoint.dx, startPoint.dy + endPoint.dy);
+    Offset bottomRight =
+        Offset(startPoint.dx + endPoint.dx, startPoint.dy + endPoint.dy);
     return [topLeft, topRight, bottomLeft, bottomRight];
   }
 
@@ -80,18 +83,28 @@ class TransformationController {
   /// [imageResolution]: The resolution of the image.
   ///
   /// Returns a [BoundingBox] representing the transformed region of interest on the image.
-  static BoundingBox transformRegionOfInterestOnImage(Offset startPoint, Offset endPoint, Size screenResolution, Size imageResolution) {
+  static BoundingBox transformRegionOfInterestOnImage(Offset startPoint,
+      Offset endPoint, Size screenResolution, Size imageResolution) {
     // Calculate the screen rectangular region of interest
-    List<Offset> rectangularPointsOfRegion = calculateRegionOfInterestOnScreen(startPoint, endPoint);
+    List<Offset> rectangularPointsOfRegion =
+        calculateRegionOfInterestOnScreen(startPoint, endPoint);
 
     // Transform each point to image coordinates
-    Offset topLeft = transformPoint(rectangularPointsOfRegion[0], imageResolution, screenResolution);
-    Offset topRight = transformPoint(rectangularPointsOfRegion[1], imageResolution, screenResolution);
-    Offset bottomLeft = transformPoint(rectangularPointsOfRegion[2], imageResolution, screenResolution);
-    Offset bottomRight = transformPoint(rectangularPointsOfRegion[3], imageResolution, screenResolution);
+    Offset topLeft = transformPoint(
+        rectangularPointsOfRegion[0], imageResolution, screenResolution);
+    Offset topRight = transformPoint(
+        rectangularPointsOfRegion[1], imageResolution, screenResolution);
+    Offset bottomLeft = transformPoint(
+        rectangularPointsOfRegion[2], imageResolution, screenResolution);
+    Offset bottomRight = transformPoint(
+        rectangularPointsOfRegion[3], imageResolution, screenResolution);
 
     // Return a BoundingBox representing the transformed region of interest on the image
-    return BoundingBox(topLeft: topLeft, topRight: topRight, bottomRight: bottomRight, bottomLeft: bottomLeft);
+    return BoundingBox(
+        topLeft: topLeft,
+        topRight: topRight,
+        bottomRight: bottomRight,
+        bottomLeft: bottomLeft);
   }
 
   /// Convert from [BoundingBox] to [img.Point] data for the image package.
