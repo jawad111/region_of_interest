@@ -18,10 +18,10 @@ import 'package:image/image.dart' as img;
 
 part 'src/controllers/transformation_controller.dart';
 part 'src/controllers/image_controller.dart';
-part 'src/views/captureRegion_widget.dart';
+part 'src/views/captureregion_widget.dart';
 part 'src/views/display_capture.dart';
-part 'src/models/boundingBox.dart';
-part 'src/controllers/ImageProcessingManager.dart';
+part 'src/models/boundingbox_model.dart';
+part 'src/controllers/imageprocessing_manager.dart';
 part 'src/views/live_preview.dart';
 
 
